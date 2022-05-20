@@ -7,7 +7,7 @@ This repo houses my major config files, so I can keep work on them synced across
 | file | program | purpose |
 |------|---------|-------------|
 | .vimrc | neovim | where I do most of my code development |
-| tmux | .tmux.conf | organized panes of tasks, including development |
+| .tmux.conf | tmux | organized panes of tasks, including development |
 | .spacemacs | space-emacs | where I organize my ideas (org-mode, which vim does not do well) |
 
 ## What's not here
