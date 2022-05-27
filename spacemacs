@@ -119,7 +119,8 @@
                                       org-edna
                                       (calfw :location local)
                                       (calfw-org :location local)
-                                      (pushover :location "~/.config/emacs/emacs-pushover/pushover.el")
+                                      org-modern
+                                      (pushover :location ) ;; (expand-file-name "~/.config/emacs/emacs-pushover/pushover.el")
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -310,7 +311,7 @@ It should only modify the values of Spacemacs settings."
                                   '(
                                     ;;"3270Medium Nerd Font Mono"
                                     "agave Nerd Font Mono"
-                                    :size 12.0
+                                    :size 18.0
                                     :weight normal
                                     :width normal
                                     :powerline-scale 1.2)
@@ -732,20 +733,22 @@ before packages are loaded."
                         (
                          (org-agenda-span 1)
                          (org-agenda-skip-function
-                          '(org-agenda-skip-entry-if 'todo '("WAIT" "NEXT" "IN-PROGRESS" "DONE" "CANCELED"))
-                          )
-                         ;;(org-agenda-skip-function
-                         ;; '(org-agenda-skip-entry-if 'deadline))
+                          '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED" "WAIT" "NEXT" "IN-PROGRESS")))
+                         (org-agenda-skip-function
+                          '(org-agenda-skip-entry-if 'deadline))
                         )
                 )
                 ;; DEADLINE SECTION
-                ;;(agenda nil
-                ;;        ((org-agenda-entry-types '(:deadline))
-                ;;         (org-deadline-warning-days 50)
-                ;;         (org-agenda-format-date "")
-                ;;         (org-agenda-skip-function
-                ;;          '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
-                ;;         (org-agenda-overriding-header "Deadlines")))
+                (agenda "deadline"
+                        ((org-agenda-entry-types '(:deadline))
+                         (org-deadline-warning-days 50)
+                         (org-agenda-format-date "")
+                         ;;(org-agenda-skip-function
+                         ;; '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                         (org-agenda-skip-function
+                          '(org-agenda-skip-entry-if 'todo '("DONE" "CANCELED")))
+                         (org-agenda-overriding-header "Deadlines"))
+                        )
                 (tags-todo "inbox"
                           ((org-agenda-prefix-format "  %?-12t% s")
                             (org-agenda-overriding-header "Inbox\n")))
@@ -1124,14 +1127,10 @@ static char *gnus-pointer[] = {
  '(org-re-reveal-root "/home/ryoung/Downloads/reveal.js-4.3.1/js/reveal.js")
  '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(package-selected-packages
-   '(calfw-org calfw color-theme-tangotango haskell-tng-mode tern npm-mode nodejs-repl livid-mode skewer-mode js2-refactor multiple-cursors js2-mode js-doc import-js grizzl helm-gtags ggtags dap-mode lsp-treemacs bui counsel-gtags counsel swiper ivy add-node-modules-path minimap pushover org-edna org-ref citeproc queue helm-bibtex olivetti bibtex-completion biblio parsebib biblio-core org-noter-pdftools org-pdftools org-noter lsp-julia lsp-mode julia-repl julia-mode org-roam-bibtex texfrag auctex geeknote pdf-view-restore pdf-tools tablist unicode-fonts ucs-utils font-utils persistent-soft pcache slack circe oauth2 websocket emojify emoji-cheat-sheet-plus company-emoji org-sidebar ox-twbs org-wild-notifier org-trello request-deferred emacsql org-re-reveal web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode company-web web-completion-data yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete w3m mu4e-maildirs-extension mu4e-alert helm-mu pretty-mode subed zonokai-emacs zenburn-theme zen-and-art-theme yapfify white-sand-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sphinx-doc spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme rebecca-theme railscasts-theme pytest pyenv-mode pydoc py-isort purple-haze-theme professional-theme poetry transient planet-theme pippel pipenv pyvenv pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme organic-green-theme org-rich-yank org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-contrib org-cliplink omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme nose noctilux-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme modus-themes mmm-mode minimal-theme material-theme markdown-toc markdown-mode majapahit-theme madhat2r-theme lush-theme live-py-mode light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme importmagic epc ctable concurrent deferred htmlize heroku-theme hemisu-theme helm-pydoc helm-org-rifle hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gnuplot gh-md gandalf-theme flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flatui-theme flatland-theme farmhouse-theme eziam-theme exotica-theme evil-org espresso-theme dracula-theme doom-themes django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme chocolate-theme autothemer cherry-blossom-theme busybee-theme bubbleberry-theme blacken birds-of-paradise-plus-theme badwolf-theme auto-dictionary apropospriate-theme anti-zenburn-theme anaconda-mode pythonic ample-zen-theme ample-theme alect-themes afternoon-theme ws-butler writeroom-mode visual-fill-column winum volatile-highlights vi-tilde-fringe uuidgen undo-tree treemacs-projectile treemacs-persp treemacs-icons-dired treemacs-evil treemacs cfrs pfuture posframe toc-org symon symbol-overlay string-inflection string-edit spaceline-all-the-icons memoize all-the-icons spaceline powerline restart-emacs request rainbow-delimiters quickrun popwin persp-mode password-generator paradox spinner overseer org-superstar open-junk-file nameless multi-line shut-up macrostep lorem-ipsum link-hint inspector info+ indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-xref helm-themes helm-swoop helm-purpose window-purpose imenu-list helm-projectile helm-org helm-mode-manager helm-make helm-ls-git helm-flx helm-descbinds helm-ag google-translate golden-ratio flycheck-package package-lint flycheck pkg-info epl flycheck-elsa flx-ido flx fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired f evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-easymotion evil-collection annalist evil-cleverparens smartparens evil-args evil-anzu anzu eval-sexp-fu emr iedit clang-format projectile paredit list-utils elisp-slime-nav editorconfig dumb-jump s drag-stuff dired-quick-sort define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol ht dash auto-compile packed aggressive-indent ace-window ace-link ace-jump-helm-line helm avy helm-core popup which-key use-package pcre2el hydra lv hybrid-mode font-lock+ evil goto-chg dotenv-mode diminish bind-map bind-key async))
+   '(org-modern calfw-org calfw color-theme-tangotango haskell-tng-mode tern npm-mode nodejs-repl livid-mode skewer-mode js2-refactor multiple-cursors js2-mode js-doc import-js grizzl helm-gtags ggtags dap-mode lsp-treemacs bui counsel-gtags counsel swiper ivy add-node-modules-path minimap pushover org-edna org-ref citeproc queue helm-bibtex olivetti bibtex-completion biblio parsebib biblio-core org-noter-pdftools org-pdftools org-noter lsp-julia lsp-mode julia-repl julia-mode org-roam-bibtex texfrag auctex geeknote pdf-view-restore pdf-tools tablist unicode-fonts ucs-utils font-utils persistent-soft pcache slack circe oauth2 websocket emojify emoji-cheat-sheet-plus company-emoji org-sidebar ox-twbs org-wild-notifier org-trello request-deferred emacsql org-re-reveal web-mode web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd helm-css-scss haml-mode emmet-mode company-web web-completion-data yasnippet-snippets helm-company helm-c-yasnippet fuzzy company-anaconda company auto-yasnippet yasnippet ac-ispell auto-complete w3m mu4e-maildirs-extension mu4e-alert helm-mu pretty-mode subed zonokai-emacs zenburn-theme zen-and-art-theme yapfify white-sand-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme sphinx-doc spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme rebecca-theme railscasts-theme pytest pyenv-mode pydoc py-isort purple-haze-theme professional-theme poetry transient planet-theme pippel pipenv pyvenv pip-requirements phoenix-dark-pink-theme phoenix-dark-mono-theme organic-green-theme org-rich-yank org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-contrib org-cliplink omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme nose noctilux-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme modus-vivendi-theme modus-operandi-theme modus-themes mmm-mode minimal-theme material-theme markdown-toc markdown-mode majapahit-theme madhat2r-theme lush-theme live-py-mode light-soap-theme kaolin-themes jbeans-theme jazz-theme ir-black-theme inkpot-theme importmagic epc ctable concurrent deferred htmlize heroku-theme hemisu-theme helm-pydoc helm-org-rifle hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gnuplot gh-md gandalf-theme flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flatui-theme flatland-theme farmhouse-theme eziam-theme exotica-theme evil-org espresso-theme dracula-theme doom-themes django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cython-mode cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme chocolate-theme autothemer cherry-blossom-theme busybee-theme bubbleberry-theme blacken birds-of-paradise-plus-theme badwolf-theme auto-dictionary apropospriate-theme anti-zenburn-theme anaconda-mode pythonic ample-zen-theme ample-theme alect-themes afternoon-theme ws-butler writeroom-mode visual-fill-column winum volatile-highlights vi-tilde-fringe uuidgen undo-tree treemacs-projectile treemacs-persp treemacs-icons-dired treemacs-evil treemacs cfrs pfuture posframe toc-org symon symbol-overlay string-inflection string-edit spaceline-all-the-icons memoize all-the-icons spaceline powerline restart-emacs request rainbow-delimiters quickrun popwin persp-mode password-generator paradox spinner overseer org-superstar open-junk-file nameless multi-line shut-up macrostep lorem-ipsum link-hint inspector info+ indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-xref helm-themes helm-swoop helm-purpose window-purpose imenu-list helm-projectile helm-org helm-mode-manager helm-make helm-ls-git helm-flx helm-descbinds helm-ag google-translate golden-ratio flycheck-package package-lint flycheck pkg-info epl flycheck-elsa flx-ido flx fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired f evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-easymotion evil-collection annalist evil-cleverparens smartparens evil-args evil-anzu anzu eval-sexp-fu emr iedit clang-format projectile paredit list-utils elisp-slime-nav editorconfig dumb-jump s drag-stuff dired-quick-sort define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol ht dash auto-compile packed aggressive-indent ace-window ace-link ace-jump-helm-line helm avy helm-core popup which-key use-package pcre2el hydra lv hybrid-mode font-lock+ evil goto-chg dotenv-mode diminish bind-map bind-key async))
  '(tool-bar-mode nil)
- '(warning-suppress-log-types
-   '((use-package)
-     (use-package)))
- '(warning-suppress-types
-   '((use-package)
-     (use-package))))
+ '(warning-suppress-log-types '((use-package) (use-package)))
+ '(warning-suppress-types '((use-package) (use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

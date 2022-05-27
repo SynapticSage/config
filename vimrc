@@ -215,6 +215,10 @@ Plug 'https://github.com/junegunn/vim-journal'
     " :CocInstall coc-tabnine
     " :CocInstall coc-emmet coc-highlight coc-python coc-julia
     "
+    "
+    Plug 'https://github.com/github/copilot.vim'
+    imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+    let g:copilot_no_tab_map = v:true
 
     "COC.NVIM
     "Use release branch (recommend)
