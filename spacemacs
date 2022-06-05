@@ -120,6 +120,7 @@
                                       (calfw :location local)
                                       (calfw-org :location local)
                                       org-modern
+                                      org-attach-screenshot
                                       (pushover :location ) ;; (expand-file-name "~/.config/emacs/emacs-pushover/pushover.el")
                                       )
 
@@ -642,6 +643,8 @@ before packages are loaded."
 
       ;; SETTING UP ORGMODE from Rougier GTD
       ;; Shortcuts
+      ;;(require 'org)
+      ;;(package-initialize)
       (setq org-agenda-files
             (list "notes.org"
                   "projects.org"
@@ -897,6 +900,26 @@ before packages are loaded."
   (require 'org-download)
   (setq org-download-method 'attach)
   
+  (if (eq system-type 'darwin)
+      (setq system-screenshot-method "/usr/local/bin/pngpaste %s"))
+  (if (eq system-type 'windows-nt)
+      (setq system-screenshot-method "convert clipboard: %s"))
+
+  ;;(use-package org-download
+  ;;  :after org
+  ;;  :defer nil
+  ;;  :custom
+  ;;  (org-download-method 'directory)
+  ;;  (org-download-image-dir "images")
+  ;;  (org-download-heading-lvl nil)
+  ;;  (org-download-timestamp "%Y%m%d-%H%M%S_")
+  ;;  (org-image-actual-width 1100)
+  ;;  (org-download-screenshot-method system-screenshot-method)
+  ;;  :bind
+  ;;  ("C-M-y" . org-download-screenshot)
+  ;;  :config
+  ;;  (require 'org-download))
+
   (defun my-org-screenshot ()
     "Take a screenshot into a time stamped unique-named file in the
 same directory as the org-buffer and insert a link to this file."
@@ -933,29 +956,31 @@ same directory as the org-buffer and insert a link to this file."
   ;; BIBLIOGRAPPHIC AND NOTE TAKING
   (use-package org-roam-bibtex
     :after org-roam
+    :config (require 'org-ref)
     :hook (org-roam-mode . org-roam-bibtex-mode)
     :custom
     (orb-preformat-keywords '("citekey" "title" "url" "author-or-editor" "keywords" "file"))
     (orb-process-file-keyword t)
     (orb-file-field-extensions '("pdf" "epub" "html"))
     (orb-templates
-    '(("r" "ref" plain (function org-roam-capture--get-point)
-        ""
-        :file-name "${citekey}"
-        :head "#+TITLE: ${citekey}: ${title}
-  #+ROAM_KEY: ${ref}
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+            ""
+            :file-name "${citekey}"
+            :head "#+TITLE: ${citekey}: ${title}
+      #+ROAM_KEY: ${ref}
 
-  - tags ::
-  - keywords :: ${keywords}
+      - tags ::
+      - keywords :: ${keywords}
 
-  * ${title}
-    :PROPERTIES:
-    :Custom_ID: ${citekey}
-    :URL: ${url}
-    :AUTHOR: ${author-or-editor}
-    :NOTER_DOCUMENT: ${file}
-    :NOTER_PAGE:
-    :END:"))))
+      * ${title}
+        :PROPERTIES:
+        :Custom_ID: ${citekey}
+        :URL: ${url}
+        :AUTHOR: ${author-or-editor}
+        :NOTER_DOCUMENT: ${file}
+        :NOTER_PAGE:
+        :END:")))
+    )
 
   (use-package org-pdftools
   :hook (org-load . org-pdftools-setup-link))
@@ -967,18 +992,12 @@ same directory as the org-buffer and insert a link to this file."
   :config
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
-  ;; TO USE YOUR OWN PDF external binary program
-  ;; (setq org-ref-open-pdf-function
-  ;;       (lambda (fpath)
-  ;;         (start-process "zathura" "*helm-bibtex-zathura*" "/usr/bin/zathura" fpath)))
 
 
   ;; Remember configurjtion when quit!
   (desktop-save-mode 1)
 
   ;; Enhanced pomodoro
-  ;; -----------------
-  ;; TODO GET THIS TO WORK
   ;; (require pushover)
   ;; (add-hook 'org-pomodoro-finished-hook (lambda ()
   ;;                                         (pushover-send
@@ -1026,10 +1045,20 @@ same directory as the org-buffer and insert a link to this file."
 
   ;; Calendar
   (add-to-list 'load-path "/home/ryoung/.emacs.d/private/local/emacs-calfw")
-  ;;(add-to-list 'load-path "/home/ryoung/.config/emacs/emacs-calfw/calfw-org.el")
+  (if (eq system-type 'darwin) 
+      '(add-to-list 'load-path 
+      (expand-file-name "~/.config/emacs/.emacs/emacs-calfw")))
+  
   (require 'calfw)
   (require 'calfw-org)
   (require 'calfw-cal)
+
+  ;; Org-protocol
+  (if (eq system-type 'darwin)
+      '((add-to-list 'load-path "~/Library/Caches/Homebrew/emacs-plus@28--git/lisp/org/org-protocol.el")
+       (server-start)
+       (require 'org-protocol))
+  )
 
   ;; ---------------------
   ;; Desktop configuration
@@ -1040,19 +1069,6 @@ same directory as the org-buffer and insert a link to this file."
   (setq org-re-reveal-root "~/Downloads/reveal.js-4.3.1/js/reveal.js")
 
 
-  ;; ORG-MODERN
-  ;;(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
-  (global-org-modern-mode)
-  ;; Agenda styling
-  (setq
-    org-agenda-block-separator ?─
-    org-agenda-time-grid
-    '((daily today require-timed)
-      (800 1000 1200 1400 1600 1800 2000)
-      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
-    org-agenda-current-time-string
-    "⭠ now ─────────────────────────────────────────────────"
-  )
 
 )
 
