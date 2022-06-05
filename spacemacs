@@ -967,6 +967,10 @@ same directory as the org-buffer and insert a link to this file."
   :config
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+  ;; TO USE YOUR OWN PDF external binary program
+  ;; (setq org-ref-open-pdf-function
+  ;;       (lambda (fpath)
+  ;;         (start-process "zathura" "*helm-bibtex-zathura*" "/usr/bin/zathura" fpath)))
 
 
   ;; Remember configurjtion when quit!
@@ -1034,6 +1038,21 @@ same directory as the org-buffer and insert a link to this file."
   (desktop-save-mode 1)
 
   (setq org-re-reveal-root "~/Downloads/reveal.js-4.3.1/js/reveal.js")
+
+
+  ;; ORG-MODERN
+  ;;(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+  (global-org-modern-mode)
+  ;; Agenda styling
+  (setq
+    org-agenda-block-separator ?─
+    org-agenda-time-grid
+    '((daily today require-timed)
+      (800 1000 1200 1400 1600 1800 2000)
+      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+    org-agenda-current-time-string
+    "⭠ now ─────────────────────────────────────────────────"
+  )
 
 )
 
@@ -1112,7 +1131,7 @@ static char *gnus-pointer[] = {
      ("\\?\\?\\?+" . "#dc752f")))
  '(large-file-warning-threshold 100000000)
  '(org-agenda-files
-   '("/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/techdev-and-organization.org" "/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/climb.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/drinks.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/sink.org" "/home/ryoung/Documents/org/reference.org"))
+   '("~/Documents/org/literature.org" "/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/techdev-and-organization.org" "/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/climb.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/drinks.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/sink.org" "/home/ryoung/Documents/org/reference.org"))
  '(org-agenda-prefix-format
    '((agenda . " %i %-12:c%?-12t% s")
      (todo . " %i %-12-->b %-12:c")
