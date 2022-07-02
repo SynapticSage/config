@@ -458,30 +458,35 @@ Plug 'yinflying/matlab.vim'
 Plug 'https://github.com/JuliaEditorSupport/julia-vim'
 "Plug 'zyedidia/julialint.vim'
 Plug 'JuliaEditorSupport/julia-vim'
-Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
-"Plug 'roxma/nvim-completion-manager'  " optional
-let g:default_julia_version = '1.7.1'
-" language server
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_serverCommands = {
-\   'julia': ['julia', '--startup-file=no', '--history-file=no', '-e', '
-\       using LanguageServer;
-\       using Pkg;
-\       import StaticLint;
-\       import SymbolServer;
-\       env_path = dirname(Pkg.Types.Context().env.project_file);
-\       #env_path = "/home/ryoung/Code/project/goal-code/";
-\       
-\       server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path, "");
-\       server.runlinter = true;
-\       run(server);
-\   ']
-\ }
-Plug 'https://github.com/kdheepak/JuliaFormatter.vim' " TODO DO NOT NEED IF RUNNING LANGUAGESERVER WITH LSP version of NEOVIM
 
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+" LANGAUGE SERVER PROTOCOL
+Plug 'neovim/nvim-lsp'
+Plug 'neovim/nvim-lspconfig'
+Plug 'https://github.com/williamboman/nvim-lsp-installer'
+
+"Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
+""Plug 'roxma/nvim-completion-manager'  " optional
+"let g:default_julia_version = '1.7.1'
+"" language server
+"let g:LanguageClient_autoStart = 1
+"let g:LanguageClient_serverCommands = {
+"\   'julia': ['julia', '--startup-file=no', '--history-file=no', '-e', '
+"\       using LanguageServer;
+"\       using Pkg;
+"\       import StaticLint;
+"\       import SymbolServer;
+"\       env_path = dirname(Pkg.Types.Context().env.project_file);
+"\       #env_path = "/home/ryoung/Code/project/goal-code/";
+"\       
+"\       server = LanguageServer.LanguageServerInstance(stdin, stdout, env_path, "");
+"\       server.runlinter = true;
+"\       run(server);
+"\   ']
+"\ }
+"Plug 'https://github.com/kdheepak/JuliaFormatter.vim' " TODO DO NOT NEED IF RUNNING LANGUAGESERVER WITH LSP version of NEOVIM
+"nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+"nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+"nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
 hi link juliaParDelim Delimiter
 hi link juliaSemicolon Operator
@@ -563,6 +568,39 @@ let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols['.*m$'] = 'M'
 "
 " All of your Plugins must be added before the following line
 call plug#end()
+
+
+
+
+" Language server
+lua << EOF
+    local util = require "lspconfig/util"
+
+    local cmd = {
+      "julia",
+      "--startup-file=no",
+      "--history-file=no",
+      "/home/ryoung/.config/nvim/lua/ryoung/lsp.jl"
+    }
+
+    require"lspconfig".julials.setup {
+        cmd = cmd,
+        on_new_config = function(new_config, _)
+            local server_path = vim.fn.system "julia --startup-file=no -q -e 'print(dirname(dirname(Base.find_package(\"LanguageServer\"))))'"
+            local new_cmd = vim.deepcopy(cmd)
+            table.insert(new_cmd, 2, "--project=" .. server_path)
+            new_config.cmd = new_cmd
+        end,
+        filetypes = {"julia"},
+        root_dir = function(fname)
+            return util.find_git_ancestor(fname) or vim.fn.getcwd()
+        end
+    }
+EOF
+"" LANGAUGE SERVER PROTOCOL Julia
+autocmd Filetype julia setlocal omnifunc=v:lua.vim.lsp.omnifunc
+
+
 " Standard options
 filetype plugin indent on
 
