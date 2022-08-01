@@ -14,3 +14,8 @@ function customize_keys(repl)
     repl.interface = REPL.setup_interface(repl; extra_repl_keymap = mykeys)
 end
 atreplinit(customize_keys)
+
+# Run quick tests at startup to ensure library integrity
+if isdir(projectdir("test")) && isfile(projectdir("test","runtests.jl"))
+    include(projectdir("test","runtests.jl"))
+end

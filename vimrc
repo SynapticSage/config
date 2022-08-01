@@ -248,7 +248,7 @@ nmap <silent> <leader>gu :Semshi goto unresolved first<CR>
 nmap <silent> <leader>gp :Semshi goto parameterUnused first<CR>
 nmap <silent> <leader>ee :Semshi error<CR>
 nmap <silent> <leader>ge :Semshi goto error<CR>
-Plug 'https://github.com/sheerun/vim-polyglot'
+"Plug 'https://github.com/sheerun/vim-polyglot'
 
 " ---------
 " Jupyter
@@ -583,8 +583,35 @@ lua << EOF
       "/home/ryoung/.config/nvim/lua/ryoung/lsp.jl"
     }
 
+    -- Use an on_attach function to only map the following keys
+    -- after the language server attaches to the current buffer
+    local on_attach = function(client, bufnr)
+       -- Enable completion triggered by <c-x><c-o>
+       vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+        --   -- Mappings.
+        --   -- See `:help vim.lsp.*` for documentation on any of the below functions
+        local bufopts = { noremap=true, silent=true, buffer=bufnr }
+        vim.keymap.set('n', 'gD',        vim.lsp.buf.declaration,             bufopts)
+        vim.keymap.set('n', 'gd',        vim.lsp.buf.definition,              bufopts)
+        vim.keymap.set('n', 'K',         vim.lsp.buf.hover,                   bufopts)
+        vim.keymap.set('n', 'gi',        vim.lsp.buf.implementation,          bufopts)
+        vim.keymap.set('n', '<C-k>',     vim.lsp.buf.signature_help,          bufopts)
+        vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder,    bufopts)
+        vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+        vim.keymap.set('n', '<space>wl', function()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, bufopts)
+        vim.keymap.set('n', '<space>D',  vim.lsp.buf.type_definition, bufopts)
+        vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename,          bufopts)
+        vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action,     bufopts)
+        vim.keymap.set('n', 'gr',        vim.lsp.buf.references,      bufopts)
+        vim.keymap.set('n', '<space>f',  vim.lsp.buf.formatting,      bufopts)
+    end
+
     require"lspconfig".julials.setup {
         cmd = cmd,
+        on_attach = on_attach,
         on_new_config = function(new_config, _)
             local server_path = vim.fn.system "julia --startup-file=no -q -e 'print(dirname(dirname(Base.find_package(\"LanguageServer\"))))'"
             local new_cmd = vim.deepcopy(cmd)
@@ -596,7 +623,19 @@ lua << EOF
             return util.find_git_ancestor(fname) or vim.fn.getcwd()
         end
     }
+
+    -- Mappings.
+    -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+    local opts = { noremap=true, silent=true }
+    vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', '[d',       vim.diagnostic.goto_prev,  opts)
+    vim.keymap.set('n', ']d',       vim.diagnostic.goto_next,  opts)
+    vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+
+
+
 EOF
+
 "" LANGAUGE SERVER PROTOCOL Julia
 autocmd Filetype julia setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
