@@ -632,7 +632,21 @@ lua << EOF
     vim.keymap.set('n', ']d',       vim.diagnostic.goto_next,  opts)
     vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
+    require'lspconfig'.pyright.setup{
+        on_attach = on_attach
+    }
 
+    require'lspconfig'.awk_ls.setup{
+        on_attach = on_attach
+    }
+
+    require'lspconfig'.yamlls.setup{
+        on_attach = on_attach
+    }
+
+    require'lspconfig'.vimls.setup{
+        on_attach = on_attach
+    }
 
 EOF
 
