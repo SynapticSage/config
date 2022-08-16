@@ -321,8 +321,9 @@ It should only modify the values of Spacemacs settings."
                                     :powerline-scale 1.2)
                                   '(
                                     ;;"3270Medium Nerd Font Mono"
-                                    "agave Nerd Font Mono"
-                                    :size 18.0
+                                    ;;"agave Nerd Font Mono"
+                                    "FiraCode Nerd Font"
+                                    :size 15.0
                                     :weight normal
                                     :width normal
                                     :powerline-scale 1.2)
