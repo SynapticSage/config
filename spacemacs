@@ -128,8 +128,9 @@
                                              (setq org-roam-ui-sync-theme t
                                                    org-roam-ui-follow t
                                                    org-roam-ui-update-on-save t
-                                                   org-roam-ui-open-on-start t)
+                                                   org-roam-ui-open-on-start t
                                              )
+                                      )
                                       org-attach-screenshot
                                       (pushover :location ) ;; (expand-file-name "~/.config/emacs/emacs-pushover/pushover.el")
                                       )
@@ -820,9 +821,12 @@ before packages are loaded."
       ;; -------------
       ;; Org refiling
       ;; -------------
+      (setq myroamfiles (directory-files "~/Documents/org/roam/" t "org$"))
       (setq org-refile-targets
             '((nil :maxlevel . 8)
-              (org-agenda-files :maxlevel . 4)))
+              (org-agenda-files :maxlevel . 4)
+              (myroamfiles :maxlevel . 4)
+              ))
       (setq org-refile-use-outline-path 'file)
       (setq org-refile-allow-creating-parent-nodes 'confirm) ;; allow new parents during setup
       (setq org-outline-path-complete-in-steps nil)
@@ -870,6 +874,9 @@ before packages are loaded."
 
   )
   ;; end with-eval-after-org
+
+  ;; Open agenda on startup
+  (add-hook 'after-init-hook 'org-agenda-list)
 
 
 
@@ -1086,6 +1093,7 @@ same directory as the org-buffer and insert a link to this file."
   (setq org-re-reveal-root "~/Downloads/reveal.js-4.3.1/js/reveal.js")
 
 
+  (require org-roam-ui)
 
 )
 
@@ -1165,14 +1173,15 @@ static char *gnus-pointer[] = {
  '(large-file-warning-threshold 100000000)
  '(orb-attached-file-extensions '("pdf" "epub" "html") nil nil "Customized with use-package org-roam-bibtex")
  '(org-agenda-files
-   '("/home/ryoung/Documents/org/roam/daily/2022-07-26.org" "/home/ryoung/Documents/org/roam/daily/2022-07-25.org" "/home/ryoung/Documents/org/roam/daily/2022-07-18.org" "/home/ryoung/Documents/org/recurrent-literature.org" "/home/ryoung/Documents/org/literature.org" "/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/techdev-and-organization.org" "/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/climb.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/reference.org"))
+   '("/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/drinksfood.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/literature.org" "/home/ryoung/Documents/org/recurrent-literature.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/climb.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/reference.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/techdev-and-organization.org"))
  '(org-agenda-prefix-format
    '((agenda . " %i %-12:c%?-12t% s")
      (todo . " %i %-12-->b %-12:c")
      (tags . " %i %-12:c")
      (search . " %i %-12:c")))
  '(org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled nil nil "Do no show deadline before a scheduled appearance, but show >= scheduled")
- '(org-download-image-org-width 800)
+ '(org-download-delete-image-after-download nil)
+ '(org-download-image-org-width 400)
  '(org-fontify-done-headline nil)
  '(org-fontify-todo-headline nil)
  '(org-habit-show-habits nil)

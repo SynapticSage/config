@@ -35,10 +35,6 @@ else
     project_path=dirname(something(Base.current_project(pwd()),
                                    Base.load_path_expand(LOAD_PATH[2])))
 
-    #if isdir(srcdir())
-    #push!(LOAD_PATH, srcdir())
-    #end
-
     @info env dir project_path depot_path
 
     server = LanguageServer.LanguageServerInstance(stdin, stdout, project_path, depot_path)

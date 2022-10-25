@@ -1,4 +1,4 @@
-"" (1) Add a second map for the esc key!
+" (1) Add a second map for the esc key!
 " (2) Add shortcuts to the normal mode functios within insert (via ctrl +
 " normal characeter)
 " %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,9 +215,9 @@ Plug 'https://github.com/junegunn/vim-journal'
     " :CocInstall coc-emmet coc-highlight coc-python coc-julia
     "
     "
-    Plug 'https://github.com/github/copilot.vim'
-    imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
-    let g:copilot_no_tab_map = v:true
+    "Plug 'https://github.com/github/copilot.vim'
+    "imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+    "let g:copilot_no_tab_map = v:true
 
 
     "COC.NVIM
@@ -459,6 +459,13 @@ Plug 'https://github.com/JuliaEditorSupport/julia-vim'
 "Plug 'zyedidia/julialint.vim'
 Plug 'JuliaEditorSupport/julia-vim'
 
+
+let g:tagbar_type_julia = {
+    \ 'ctagstype' : 'julia',
+    \ 'kinds'     : [
+        \ 't:struct', 'f:function', 'm:macro', 'c:const']
+    \ }
+
 " LANGAUGE SERVER PROTOCOL
 Plug 'neovim/nvim-lsp'
 Plug 'neovim/nvim-lspconfig'
@@ -572,6 +579,13 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'tzachar/fuzzy.nvim'
+Plug 'https://github.com/tzachar/cmp-fuzzy-buffer'
+Plug 'https://github.com/tzachar/cmp-fuzzy-path'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', {
+            \ 'do' : 'make'
+            \ }
+"use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
 
 
 
@@ -664,6 +678,7 @@ lua << EOF
     -- Use an on_attach function to only map the following keys
     -- after the language server attaches to the current buffer
     local on_attach = function(client, bufnr)
+
        -- Enable completion triggered by <c-x><c-o>
        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -677,9 +692,11 @@ lua << EOF
         vim.keymap.set('n', '<C-k>',     vim.lsp.buf.signature_help,          bufopts)
         vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder,    bufopts)
         vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-        vim.keymap.set('n', '<space>wl', function()
+        vim.keymap.set('n', '<space>wl', 
+        function()
           print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end, bufopts)
+        end, 
+        bufopts)
         vim.keymap.set('n', '<space>D',  vim.lsp.buf.type_definition, bufopts)
         vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename,          bufopts)
         vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action,     bufopts)
@@ -687,7 +704,7 @@ lua << EOF
         vim.keymap.set('n', '<space>f',  vim.lsp.buf.formatting,      bufopts)
     end
 
-    require"lspconfig".julials.setup {
+    require("lspconfig").julials.setup {
         cmd = cmd,
         on_attach = on_attach,
         on_new_config = function(new_config, _)
@@ -711,25 +728,26 @@ lua << EOF
     vim.keymap.set('n', ']d',       vim.diagnostic.goto_next,  opts)
     vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
-    require'lspconfig'.pyright.setup{
+    require('lspconfig').pyright.setup{
         on_attach = on_attach,
         capabilities = capabilities
     }
 
-    require'lspconfig'.awk_ls.setup{
+
+    require('lspconfig').vimls.setup{
         on_attach = on_attach,
         capabilities = capabilities
     }
 
-    require'lspconfig'.yamlls.setup{
-        on_attach = on_attach,
-        capabilities = capabilities
-    }
+    -- require('lspconfig').awk_ls.setup{
+    --     on_attach = on_attach,
+    --     capabilities = capabilities
+    -- }
 
-    require'lspconfig'.vimls.setup{
-        on_attach = on_attach,
-        capabilities = capabilities
-    }
+    -- require('lspconfig').yamlls.setup{
+    --     on_attach = on_attach,
+    --     capabilities = capabilities
+    -- }
 
       -- -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
       -- require('lspconfig')['julials'].setup {
@@ -845,6 +863,7 @@ au FileType py set textwidth=79 " PEP-8 Friendly
 autocmd BufRead,BufNewFile   *.py let b:slime_cell_delimiter="#%%"
 autocmd FileType c setlocal foldmethod=syntax
 autocmd BufRead,BufNewFile  *.py  nmap <leader>c <Plug>SlimeSendCell
+au FileType py let g:slime_python_ipython = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Theme suggestinos
@@ -971,6 +990,5 @@ augroup END
 
 
 set guifont=DroidSansMono\ Nerd\ Font:h18
-
 
 

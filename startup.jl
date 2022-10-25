@@ -41,3 +41,8 @@ SyntaxHighlighter.text!(penumbra_dark, crayon"#8F8F8F")
 SyntaxHighlighter.add!("Penumbra Dark", penumbra_dark)
 
 OhMyREPL.colorscheme!("Penumbra Dark")
+
+ENV["PYTHON"] = "/home/ryoung/miniconda3/envs/conda_jl/bin/python"
+ENV["CONDA_JL_HOME"] = "/home/ryoung/miniconda3/envs/conda_jl/"
+#ENV["CONDA_JL_CONDA_EXE"] = "/home/ryoung/miniconda3/bin/conda"
+ENV["CONDA_JL_CONDA_EXE"] = "/home/ryoung/miniconda3/condabin/mamba"
