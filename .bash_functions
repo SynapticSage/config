@@ -449,6 +449,7 @@ addPythonPath()
 #alias imgoaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -e '@time using GoalFetchAnalysis'"
 alias imgoaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -J ~/Projects/goal-code/GFA-dependencies-sysimage.so"
 alias goaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -e 'using GoalFetchAnalysis'"
+alias imjulia="cd ~/Projects/goal-code && julia --threads 16 -J ~/Projects/goal-code/GFA-dependencies-sysimage.so"
 function plutogoaljulia()
 {
     export USE_PLUTO=1 
@@ -457,7 +458,7 @@ function plutogoaljulia()
 }
 function compilejulia()
 {
-    export USE_PLUTO=1 
+    #export USE_PLUTO=1 
     #cd "/home/ryoung/Projects/goal-code" && \
     julia --threads 16 -e 'quickactivate(expanduser("~/Projects/goal-code")); using GoalFetchAnalysis; import Precompile; Precompile.precompile_GFA_dependencies(); exit()'
 }

@@ -764,7 +764,7 @@ EOF
 
 "" LANGAUGE SERVER PROTOCOL Julia
 autocmd Filetype julia setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype julia setglobal slime_bracketed_paste=1 
+autocmd BufRead,BufNewFile *.jl let g:slime_bracketed_paste=1 
 
 
 " Standard options
