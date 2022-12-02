@@ -1,6 +1,7 @@
 using Revise
 using DrWatson
 import OhMyREPL
+using InteractiveUtils
 
 #import REPL
 #REPL.Options(confirm_exit=true)  

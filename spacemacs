@@ -1173,7 +1173,7 @@ static char *gnus-pointer[] = {
  '(large-file-warning-threshold 100000000)
  '(orb-attached-file-extensions '("pdf" "epub" "html") nil nil "Customized with use-package org-roam-bibtex")
  '(org-agenda-files
-   '("/Users/ryoung/Documents/org/roam/20220827235900-isolated_spiking.org" "/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/drinksfood.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/literature.org" "/home/ryoung/Documents/org/recurrent-literature.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/climb.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/reference.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/techdev-and-organization.org"))
+   '("/home/ryoung/Documents/org/climb.org" "/Users/ryoung/Documents/org/roam/20220827235900-isolated_spiking.org" "/home/ryoung/Documents/org/career.org" "/home/ryoung/Documents/org/notes.org" "/home/ryoung/Documents/org/projects.org" "/home/ryoung/Documents/org/data.org" "/home/ryoung/Documents/org/inbox.org" "/home/ryoung/Documents/org/agenda.org" "/home/ryoung/Documents/org/comm-dev.org" "/home/ryoung/Documents/org/control.org" "/home/ryoung/Documents/org/drinksfood.org" "/home/ryoung/Documents/org/people.org" "/home/ryoung/Documents/org/literature.org" "/home/ryoung/Documents/org/recurrent-literature.org" "/home/ryoung/Documents/org/org-files.org" "/home/ryoung/Documents/org/scratch.org" "/home/ryoung/Documents/org/reference.org" "/home/ryoung/Documents/org/boston.org" "/home/ryoung/Documents/org/houston.org" "/home/ryoung/Documents/org/events.org" "/home/ryoung/Documents/org/travel.org" "/home/ryoung/Documents/org/techdev-and-organization.org"))
  '(org-agenda-prefix-format
    '((agenda . " %i %-12:c%?-12t% s")
      (todo . " %i %-12-->b %-12:c")
@@ -1200,6 +1200,7 @@ static char *gnus-pointer[] = {
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil))))
  '(highlight-parentheses-highlight ((nil (:weight ultra-bold))) t))
 )
 
