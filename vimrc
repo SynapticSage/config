@@ -196,6 +196,9 @@ let g:syntastic_matlab_mlint_exec = "/usr/local/MATLAB/R2021b/bin/glnxa64/mlint"
 " Journaling syntax
 Plug 'https://github.com/junegunn/vim-journal'
 
+" AI
+Plug 'https://github.com/terror/chatgpt.nvim'
+
 " CODE COMPLETION
     
     "YOU COMPLETE ME
