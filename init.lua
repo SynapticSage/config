@@ -58,8 +58,8 @@ require('packer').startup(function(use)
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
 
   -- Fonts
-  use 'https://github.com/lambdalisue/nerdfont.vim'
-  use 'ryanoasis/vim-devicons'
+  -- use 'https://github.com/lambdalisue/nerdfont.vim'
+  -- use 'ryanoasis/vim-devicons'
 
   -- Colors
   use 'https://github.com/jpo/vim-railscasts-theme'
@@ -80,18 +80,53 @@ require('packer').startup(function(use)
   use 'https://github.com/cocopon/iceberg.vim'
   use 'https://github.com/mhartington/oceanic-next'
   use 'https://github.com/sainnhe/gruvbox-material'
+  use {
+    'uloco/bluloco.nvim',
+    requires = { 'rktjmp/lush.nvim' }
+  }
+ 
 
   -- Status bar
   use 'feline-nvim/feline.nvim' 
   -- use 'https://github.com/vim-airline/vim-airline'
   -- use 'vim-airline/vim-airline-themes'
+  
+  -- Which key
+  use {
+  "folke/which-key.nvim",
+  config = function()
+    vim.o.timeout = true
+    vim.o.timeoutlen = 300
+    require("which-key").setup {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      }
+    end
+  }
+  -- Modify the layout here! --- can I do this selectively?
+  -- https://github.com/folke/which-key.nvim
 
   -- Tmux
   use 'https://github.com/jpalardy/vim-slime'
+  use 'https://github.com/andreypopp/julia-repl-vim'
+  -- Lookup autocmd in lua and call :JuliaREPLConnect
 
+  --- TELESCOPE RELATED -----
+  -- Telescope tabs
+  use {
+    "https://github.com/LukasPietzschmann/telescope-tabs",
+    requires = { 'nvim-telescope/telescope.nvim' },
+    config = function() 
+          -- TODO these appear to fail
+          require'telescope-tabs'.setup{
+                  close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
+                  close_tab_shortcut_n = '<leader>tc',     -- if you're in normal mode
+          }
+    end
+  }
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
-
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
@@ -142,6 +177,9 @@ require('packer').startup(function(use)
 
   -- Many misc packages, eg animation
   use { 'echasnovski/mini.nvim'}
+
+  -- Scrolling
+  use("petertriho/nvim-scrollbar")
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -228,7 +266,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
+vim.cmd [[colorscheme bluloco]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -265,7 +303,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('lualine').setup {
   options = {
     icons_enabled = false,
-    theme = 'onedark',
+    --theme = 'onedark',
     component_separators = '|',
     section_separators = '',
   },
@@ -325,6 +363,9 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>st', require('telescope-tabs').list_tabs, { desc = '[S]earch [T]abs; D - remove tab' })
+vim.keymap.set('n', '<leader>T', require('telescope-tabs').go_to_previous, { desc = 'Previous [T]ab' })
+--- PLace a tab close
 
 -- empty setup using defaults
 require("nvim-tree").setup()
@@ -393,10 +434,12 @@ require('nvim-treesitter.configs').setup {
     swap = {
       enable = true,
       swap_next = {
-        ['<leader>a'] = '@parameter.inner',
+        --['<leader>a'] = '@parameter.inner',
+        ['<ctrl><left>'] = '@parameter.inner',
       },
       swap_previous = {
-        ['<leader>A'] = '@parameter.inner',
+        --['<leader>A'] = '@parameter.inner',
+        ['<ctrl><leftl>'] = '@parameter.inner',
       },
     },
   },
@@ -430,9 +473,10 @@ local on_attach = function(_, bufnr)
   nmap('<leader>gq', "<cmd>lua vim.lsp.buf.formatting()<CR>", "Format Code (gq, but lsp based)")
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
@@ -441,7 +485,6 @@ local on_attach = function(_, bufnr)
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
   nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
   nmap('<leader>wl', function()
@@ -535,8 +578,40 @@ mason_lspconfig.setup_handlers {
 require('fidget').setup()
 
 -- nvim-cmp setup
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+local cmp = require 'cmp' -- autocomplet engine
+---------- 22-01-2023 ---------------
+local luasnip = require 'luasnip' -- luasnip
+luasnip.config.set_config({
+  history = true,
+  updateevents = "TextChanged,TextChangedI",
+  enable_autosnippets = true
+})
+require("luasnip.loaders.from_lua").load({paths="~/config/nvim/snippets"}) -- where to look for snippets
+require("luasnip.loaders.from_vscode").load({ include = { "python", "julia", "lua" } })
+require("luasnip.loaders.from_lua").load({ include = { "python", "julia", "lua" } })
+
+vim.keymap.set({"i","s"}, "<c-j>", function ()
+  if luasnip.jumpable(1) then
+    luasnip.jump(1)
+  end
+end)
+vim.keymap.set({"i","s"}, "<c-k>", function ()
+  if luasnip.jumpable(-1) then
+    luasnip.jump(-1)
+  end
+end)
+vim.keymap.set({"i","s"}, "<c-l>", function ()
+  if luasnip.choice_active() then
+    luasnip.change_choice(1)
+  end
+end)
+vim.keymap.set({"i","s"}, "<c-h>", function ()
+  if luasnip.choice_active() then
+    luasnip.change_choice(-1)
+  end
+end)
+
+---------- 22-01-2023 ---------------
 
 cmp.setup {
   snippet = {
@@ -572,8 +647,8 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
+    { name = 'luasnip', max_item_count=3},
+    { name = 'nvim_lsp', max_item_count=20},
   },
 }
 
@@ -584,7 +659,11 @@ vim.keymap.set("n", "<leader>gf", "<cmd>CellularAutomaton make_it_rain<CR>")
 -- vim: ts=2 sts=2 sw=2 etc
 
 -- [[Setting up outline symbols ]]
-require("symbols-outline").setup()
+require("symbols-outline").setup({
+  auto_preview=true,
+  winblend=1,
+  autofold_depth=1,
+})
 vim.keymap.set("n", "<leader>so", "<cmd>SymbolsOutline<CR>")
 vim.keymap.set("n", "<leader>o",  "<cmd>SymbolsOutline<CR>")
 
@@ -622,3 +701,5 @@ require'nvim-web-devicons'.setup {
  default = true;
 }
 
+
+require("scrollbar").setup()
