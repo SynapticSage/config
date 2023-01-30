@@ -16,12 +16,6 @@ function customize_keys(repl)
 end
 atreplinit(customize_keys)
 
-# Run quick tests at startup to ensure library integrity
-if isdir(projectdir("test")) && isfile(projectdir("test","runtests.jl")) && 
-    "USE_PLUTO" ∉ keys(ENV)
-    include(projectdir("test","runtests.jl"))
-end
-
 
 import OhMyREPL: Passes.SyntaxHighlighter
 using Crayons
@@ -47,3 +41,11 @@ ENV["PYTHON"] = "/home/ryoung/miniconda3/envs/conda_jl/bin/python"
 ENV["CONDA_JL_HOME"] = "/home/ryoung/miniconda3/envs/conda_jl/"
 #ENV["CONDA_JL_CONDA_EXE"] = "/home/ryoung/miniconda3/bin/conda"
 ENV["CONDA_JL_CONDA_EXE"] = "/home/ryoung/miniconda3/condabin/mamba"
+
+
+# Run this the first time!
+# ------------------------
+import Term: install_term_logger
+install_term_logger()
+#import Term: install_term_stacktrace
+#install_term_stacktrace()  #
