@@ -460,7 +460,7 @@ function compilejulia()
 {
     #export USE_PLUTO=1 
     #cd "/home/ryoung/Projects/goal-code" && \
-    julia --threads 16 -e 'quickactivate(expanduser("~/Projects/goal-code")); using GoalFetchAnalysis; import Precompile; Precompile.precompile_GFA_dependencies(); exit()'
+    julia --threads 16 -e 'quickactivate(expanduser("~/Projects/goal-code")); using GoalFetchAnalysis; import Precompile; Precompile.precompile_GFA_dependencies(incremental=false); exit()'
 }
 
 
