@@ -1,3 +1,17 @@
+function file_exists(file)
+  local f = io.open(file, "rb")
+  if f then f:close() end
+  return f ~= nil
+end
+function lines_from(file)
+  if not file_exists(file) then return {} end
+  local lines = {}
+  for line in io.lines(file) do 
+    lines[#lines + 1] = line
+  end
+  return lines
+end
+
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local is_bootstrap = false
@@ -181,6 +195,29 @@ require('packer').startup(function(use)
   -- Scrolling
   use("petertriho/nvim-scrollbar")
 
+  -- Markdown
+  use {"ellisonleao/glow.nvim", config = function() require("glow").setup() end}
+  use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
+
+  -- AI
+  use({
+    'dense-analysis/neural',
+      requires = {
+          'MunifTanjim/nui.nvim',
+          'ElPiloto/significant.nvim'
+      }
+  })
+
+  -- Duck
+  use {
+    'tamton-aquib/duck.nvim',
+    config = function()
+        vim.keymap.set('n', '<leader>dr', function() require("duck").hatch("🐀") end, {})
+        vim.keymap.set('n', '<leader>dd', function() require("duck").hatch() end, {})
+        vim.keymap.set('n', '<leader>dk', function() require("duck").cook() end, {})
+    end
+  }
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -209,6 +246,7 @@ autocmd BufRead,BufNewFile *.jl let g:slime_bracketed_paste=1
 let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols = {} " needed
 let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols['.*m$'] = 'M'
 ]])
+-- vim.g.slime_preserve_curpos = 1
 
 -- When we are bootstrapping a configuration, it doesn't
 -- make sense to execute the rest of the init.lua.
@@ -703,3 +741,47 @@ require'nvim-web-devicons'.setup {
 
 
 require("scrollbar").setup()
+
+--- OPENAI code lookup ---
+-- get api key if exists -- 
+-- https://openai.com/api/ ---
+local key = ""
+local keyfile = '/home/ryoung/.openaikey.ryoung'
+if file_exists(keyfile) then
+  key = lines_from(keyfile)[1]
+  require('neural').setup(
+      {
+        mappings = {
+            swift = '<A-S-N>', -- Context completion
+            prompt = '<A-S-M>', -- Open prompt
+        },
+        -- OpenAI settings
+        open_ai = {
+            temperature = 0.1,
+            presence_penalty = 0.5,
+            frequency_penalty = 0.5,
+            max_tokens = 2048,
+            context_lines = 25, -- Surrounding lines for swift completion
+            api_key = key, -- (DO NOT COMMIT)
+        },
+        -- Visual settings
+        ui = {
+            use_prompt = true, -- Use visual floating Input
+            use_animated_sign = true, -- Use animated sign mark
+            show_hl = true,
+            show_icon = true,
+            icon = '🗲', -- Prompt/Static sign icon
+            icon_color = '#ffe030', -- Sign icon color
+            hl_color = '#4D4839', -- Line highlighting on output
+            prompt_border_color = '#E5C07B',
+        },
+    }
+  )
+else
+  key = "not found"
+end
+
+-- print "Show the key:"
+-- print(key)
+-- print(keyfile)
+-- print(keyfile_exists)
