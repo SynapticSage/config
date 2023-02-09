@@ -380,6 +380,8 @@ function set_tmux_panetitle()
      return 0
 }
 
+alias sTP=set_tmux_panetitle
+
 ## RSYNC ##
 # exfat-rsync : exfat is not aware of file permisions and so the -a tag that is the status quo for other file transfer types will break it.
 function exfat-rsync {
