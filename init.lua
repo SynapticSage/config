@@ -125,6 +125,7 @@ require('packer').startup(function(use)
   use 'https://github.com/jpalardy/vim-slime'
   use 'https://github.com/andreypopp/julia-repl-vim'
   -- Lookup autocmd in lua and call :JuliaREPLConnect
+  -- TODO slime-send SHOULD trigger autosave
 
   --- TELESCOPE RELATED -----
   -- Telescope tabs
@@ -163,6 +164,15 @@ require('packer').startup(function(use)
 
   --- Surround
   use 'https://github.com/tpope/vim-surround.git'
+  -- Align
+  use {'https://github.com/junegunn/vim-easy-align',
+    config = function()
+      vim.keymap.set('n', "ga", "<Plug>(EasyAlign)")
+      vim.keymap.set('x', "ga", "<Plug>(EasyAlign)")
+    end
+  }
+  use 'https://github.com/godlygeek/tabular'
+
 
   -- Display
   use {"shortcuts/no-neck-pain.nvim", tag = "*" } -- Easier view for 1 pane
@@ -172,10 +182,6 @@ require('packer').startup(function(use)
         require'alpha'.setup(require'alpha.themes.startify'.config)
       end
   }
-
-
-  -- Tab spacing control of symbols
-  use 'https://github.com/godlygeek/tabular'
 
   -- Auto pairing parentheticals
   use {
@@ -216,6 +222,16 @@ require('packer').startup(function(use)
         vim.keymap.set('n', '<leader>dd', function() require("duck").hatch() end, {})
         vim.keymap.set('n', '<leader>dk', function() require("duck").cook() end, {})
     end
+  }
+
+  -- Note taking
+  use {
+  'phaazon/mind.nvim',
+  branch = 'v2.2',
+  requires = { 'nvim-lua/plenary.nvim' },
+  config = function()
+    require'mind'.setup()
+  end
   }
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
@@ -548,6 +564,7 @@ local servers = {
   --tailwindcss = {},
   html = {},
   cssls = {},
+  -- spectral = {},
   -- rust_analyzer = {},
   -- tsserver = {},
 
@@ -780,6 +797,32 @@ if file_exists(keyfile) then
 else
   key = "not found"
 end
+
+-- SOME VIM OPTIONS
+-- Keep the cmdline on the very bottom of the window (sometimes it floats above)
+vim.api.nvim_create_autocmd({'VimResized','WinNew'},
+  {callback=function ()
+    vim.opt.cmdheight = 0 -- zero margin for the command
+  end}
+)
+vim.api.nvim_create_autocmd({'FileType', 'BufEnter', 'BufNewFile'},
+  {
+    pattern={"*.py"},
+    callback=function ()
+      -- print("Detected python ... setting up ipython paste")
+      vim.g.slime_ipython_paste=1;
+    end
+  }
+)
+vim.api.nvim_create_autocmd({'FileType','BufEnter', 'BufNewFile'},
+  {
+    pattern={"*.jl"},
+    callback=function ()
+      -- print("Detected python ... setting up bracketed paste")
+      vim.g.slime_bracketed_paste=1;
+    end
+  }
+)
 
 -- print "Show the key:"
 -- print(key)
