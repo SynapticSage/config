@@ -1,7 +1,6 @@
 using Revise
 using DrWatson
 import OhMyREPL
-using InteractiveUtils
 
 #import REPL
 #REPL.Options(confirm_exit=true)  
@@ -49,3 +48,6 @@ import Term: install_term_logger
 install_term_logger()
 #import Term: install_term_stacktrace
 #install_term_stacktrace()  #
+
+using InteractiveUtils, InteractiveErrors
+
