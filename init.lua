@@ -1,12 +1,12 @@
-function file_exists(file)
+function File_exists(file)
   local f = io.open(file, "rb")
   if f then f:close() end
   return f ~= nil
 end
-function lines_from(file)
-  if not file_exists(file) then return {} end
+function Lines_from(file)
+  if not File_exists(file) then return {} end
   local lines = {}
-  for line in io.lines(file) do 
+  for line in io.lines(file) do
     lines[#lines + 1] = line
   end
   return lines
@@ -26,7 +26,7 @@ require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   -- LSP Configuration & Plugins
-  use { 
+  use {
     'neovim/nvim-lspconfig',
     requires = {
       -- Automatically install LSPs to stdpath for neovim
@@ -65,7 +65,6 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
-  use 'navarasu/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
@@ -76,28 +75,32 @@ require('packer').startup(function(use)
   -- use 'ryanoasis/vim-devicons'
 
   -- Colors
-  use 'https://github.com/jpo/vim-railscasts-theme'
-  use 'https://github.com/raphamorim/lucario'
+  use 'https://github.com/rose-pine/neovim'
+  use "rebelot/kanagawa.nvim"
+  use { "catppuccin/nvim", as = "catppuccin" } -- https://github.com/catppuccin/nvim
+  use 'https://github.com/Mofiqul/dracula.nvim'
   use 'https://github.com/sainnhe/everforest'
   use 'https://github.com/morhetz/gruvbox'
+  use {
+    'uloco/bluloco.nvim',
+    requires = { 'rktjmp/lush.nvim' }
+  }
+  use {'https://github.com/embark-theme/vim'}
   use 'https://github.com/habamax/vim-gruvbit'
-  use 'https://github.com/quanganhdo/grb256'
+  use 'https://github.com/sainnhe/gruvbox-material'
   use 'https://github.com/ajgrf/parchment'
+  use 'https://github.com/quanganhdo/grb256'
   use 'https://github.com/vim-scripts/summerfruit256.vim'
   use 'https://github.com/nanotech/jellybeans.vim'
   use 'https://github.com/gkapfham/vim-vitamin-onec'
   use 'https://github.com/dtinth/vim-colors-dtinth256'
   use 'https://github.com/sainnhe/sonokai'
   use 'https://github.com/jacoborus/tender.vim'
+  use 'https://github.com/raphamorim/lucario'
   use 'https://github.com/Badacadabra/vim-archery'
   use 'https://github.com/whatyouhide/vim-gotham'
   use 'https://github.com/cocopon/iceberg.vim'
   use 'https://github.com/mhartington/oceanic-next'
-  use 'https://github.com/sainnhe/gruvbox-material'
-  use {
-    'uloco/bluloco.nvim',
-    requires = { 'rktjmp/lush.nvim' }
-  }
  
 
   -- Status bar
@@ -132,7 +135,7 @@ require('packer').startup(function(use)
   use {
     "https://github.com/LukasPietzschmann/telescope-tabs",
     requires = { 'nvim-telescope/telescope.nvim' },
-    config = function() 
+    config = function()
           -- TODO these appear to fail
           require'telescope-tabs'.setup{
                   close_tab_shortcut_i = '<C-d>', -- if you're in insert mode
@@ -140,6 +143,22 @@ require('packer').startup(function(use)
           }
     end
   }
+
+  -- Telescope based input()
+  use {
+    "stevearc/dressing.nvim",
+    event = "BufReadPre",
+    config = function()
+      require("dressing").setup {
+        input = { relative = "editor" },
+        select = {
+          backend = { "telescope", "fzf", "builtin" },
+        },
+      }
+    end,
+    disable = false,
+  }
+
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
@@ -206,13 +225,15 @@ require('packer').startup(function(use)
   use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
   -- AI
-  use({
-    'dense-analysis/neural',
-      requires = {
-          'MunifTanjim/nui.nvim',
-          'ElPiloto/significant.nvim'
-      }
-  })
+  -- OpenAI GPT
+  -- use({
+  --   'dense-analysis/neural',
+  --     requires = {
+  --         'MunifTanjim/nui.nvim',
+  --         'ElPiloto/significant.nvim'
+  --     }
+  -- })
+  use 'github/copilot.vim'
 
   -- Duck
   use {
@@ -320,7 +341,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme bluloco]]
+vim.cmd [[colorscheme catppuccin]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -388,6 +409,11 @@ require('gitsigns').setup {
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
+  pickers = {
+    find_files = {
+      follow=true,
+    }
+  },
   defaults = {
     mappings = {
       i = {
@@ -413,6 +439,11 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+-- vim.keymap.set('n', '<leader>sp', function()
+--   require('telescope.builtin').find_files({
+--       cwd = vim.ui.input({ prompt = "Give workspace to search", default = "", completion = "file" }) });
+-- end, { desc = '[S]earch [F]iles' })
+-- vim.keymap.set("n", "<Leader>fd", function() require('plugins.telescope').Cd() end, { })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
@@ -489,11 +520,11 @@ require('nvim-treesitter.configs').setup {
       enable = true,
       swap_next = {
         --['<leader>a'] = '@parameter.inner',
-        ['<ctrl><left>'] = '@parameter.inner',
+        ['<C-left>'] = '@parameter.inner',
       },
       swap_previous = {
         --['<leader>A'] = '@parameter.inner',
-        ['<ctrl><leftl>'] = '@parameter.inner',
+        ['<C-right>'] = '@parameter.inner',
       },
     },
   },
@@ -557,23 +588,18 @@ end
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
   pyright = {},
   julials = {},
-  --tailwindcss = {},
   html = {},
   cssls = {},
-  -- spectral = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-
-  sumneko_lua = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
+  vimls = {},
+  --lua_ls={},
+  -- sumneko_lua = {
+  --   Lua = {
+  --     workspace = { checkThirdParty = false },
+  --     telemetry = { enable = false },
+  --   },
+  -- }
 }
 
 
@@ -621,11 +647,16 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
   function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
+    if server_name ~= nil
+    then
+      -- print("sever name:");
+      -- print(server_name);
+      require('lspconfig')[server_name].setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = servers[server_name],
+      }
+    end
   end,
 }
 
@@ -762,41 +793,42 @@ require("scrollbar").setup()
 --- OPENAI code lookup ---
 -- get api key if exists -- 
 -- https://openai.com/api/ ---
-local key = ""
-local keyfile = '/home/ryoung/.openaikey.ryoung'
-if file_exists(keyfile) then
-  key = lines_from(keyfile)[1]
-  require('neural').setup(
-      {
-        mappings = {
-            swift = '<A-S-N>', -- Context completion
-            prompt = '<A-S-M>', -- Open prompt
-        },
-        -- OpenAI settings
-        open_ai = {
-            temperature = 0.1,
-            presence_penalty = 0.5,
-            frequency_penalty = 0.5,
-            max_tokens = 2048,
-            context_lines = 25, -- Surrounding lines for swift completion
-            api_key = key, -- (DO NOT COMMIT)
-        },
-        -- Visual settings
-        ui = {
-            use_prompt = true, -- Use visual floating Input
-            use_animated_sign = true, -- Use animated sign mark
-            show_hl = true,
-            show_icon = true,
-            icon = '🗲', -- Prompt/Static sign icon
-            icon_color = '#ffe030', -- Sign icon color
-            hl_color = '#4D4839', -- Line highlighting on output
-            prompt_border_color = '#E5C07B',
-        },
-    }
-  )
-else
-  key = "not found"
-end
+-- local key = ""
+-- local keyfile = '/home/ryoung/.openaikey.ryoung'
+-- if file_exists(keyfile) then
+--   key = lines_from(keyfile)[1]
+--   require('neural').setup(
+--       {
+--         mappings = {
+--             swift = '<A-S-N>', -- Context completion
+--             prompt = '<A-S-M>', -- Open prompt
+--         },
+--         -- OpenAI settings
+--         open_ai = {
+--             temperature = 0.1,
+--             presence_penalty = 0.5,
+--             frequency_penalty = 0.5,
+--             max_tokens = 2048,
+--             context_lines = 25, -- Surrounding lines for swift completion
+--             api_key = key, -- (DO NOT COMMIT)
+--         },
+--         -- Visual settings
+--         ui = {
+--             use_prompt = true, -- Use visual floating Input
+--             use_animated_sign = true, -- Use animated sign mark
+--             show_hl = true,
+--             show_icon = true,
+--             icon = '🗲', -- Prompt/Static sign icon
+--             icon_color = '#ffe030', -- Sign icon color
+--             hl_color = '#4D4839', -- Line highlighting on output
+--             prompt_border_color = '#E5C07B',
+--         },
+--     }
+--   )
+-- else
+--   key = "not found"
+-- end
+vim.keymap.set('n', '<leader>C', "<Plug>(Copilot)", { desc = 'Previous [T]ab' })
 
 -- SOME VIM OPTIONS
 -- Keep the cmdline on the very bottom of the window (sometimes it floats above)
@@ -810,7 +842,8 @@ vim.api.nvim_create_autocmd({'FileType', 'BufEnter', 'BufNewFile'},
     pattern={"*.py"},
     callback=function ()
       -- print("Detected python ... setting up ipython paste")
-      vim.g.slime_ipython_paste=1;
+      vim.g.slime_python_ipython=1;
+      -- print("ipython paste = ", vim.g.slime_python_ipython)
     end
   }
 )
