@@ -1,6 +1,6 @@
 using LanguageServer
 using LanguageServer.SymbolServer
-using DrWatson: projectdir, srcdir
+using DrWatson: projectdir, srcdir, scriptsdir
 tmp=true
 if isdir(srcdir())
     push!(LOAD_PATH, srcdir())
@@ -18,6 +18,9 @@ if tmp
         push!(LOAD_PATH, joinpath(pwd(),"src"))
         if isdir(srcdir())
             push!(LOAD_PATH, srcdir())
+        end
+        if isdir(scriptsdir())
+            push!(LOAD_PATH, scriptsdir())
         end
 
         @info "LANGUAGE SERVER SETTINGS"
