@@ -426,20 +426,33 @@ function stopRealVNC
 #Mark or unmark the service to be started at boot time with:
 #systemctl (enable|disable) vncserver-virtuald.service
 
+# ------------------------------------------------------------
+# Function: addPythonPath
+# Adds a path to the python path
+# Usage: addPythonPath <name> <path>
+# Example: addPythonPath mypath /home/user/mypath
+# This will create a file called mypath.pth in the python site-packages directory
+# with the contents /home/user/mypath
+# 
+# NOTE if you have you have a cloned repo called REPO/ and it contains
+# a src directory called REPO/repo with a REPO/repo/__init__.py file
+# then you change directory to REPO/ and run `addPythonPath repo`.
+# ------------------------------------------------------------
 addPythonPath()
 {
     P=${2:-$(pwd)} # The path
     N=$1 # The name
     echo "$N $P"
+    LOC="$CONDA_PREFIX/lib/python*/site-packages"
     # find directory
-    PYTHON_SITE=$(python -m site --user-site)
-    echo "Location = $PYTHON_SITE"
+    PYTHON_SITE=$($CONDA_PYTHON_EXE -m site --user-site)
+    echo "Location = $LOC"
     ## create if it doesn't exist
-    if [ -n $PYTHON_SITE ]
+    if [ -n $LOC ]
     then
-        mkdir -p "$PYTHON_SITE"
-        echo ${P} > "$PYTHON_SITE/${N}.pth"
-        echo "Added ${P} to $PYTHON_SITE/${N}.pth"
+        mkdir -p "$LOC"
+        echo ${P} > "$LOC/${N}.pth"
+        echo "Added ${P} to $LOC/${N}.pth"
     fi
     ## create new .pth file with our path
 }
@@ -449,9 +462,16 @@ addPythonPath()
 #eval $(thefuck --alias)
 
 #alias imgoaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -e '@time using GoalFetchAnalysis'"
-alias imgoaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -J ~/Projects/goal-code/GFA-dependencies-sysimage.so"
-alias goaljulia="cd ~/Projects/goal-code && julia --threads 16 --project=~/Projects/goal-code -e 'using GoalFetchAnalysis'"
-alias imjulia="cd ~/Projects/goal-code && julia --threads 16 -J ~/Projects/goal-code/GFA-dependencies-sysimage.so"
+function imgoaljulia() {
+    cd ~/Projects/goal-code && \
+        julia $1 --threads 16 --project=~/Projects/goal-code -J ~/Projects/goal-code/GFA-dependencies-sysimage.so 
+        #"@time using GoalFetchAnalysis; pushover(\"Loaded $1\");" 
+}
+alias goaljulia="cd ~/Projects/goal-code && julia --optimize --threads 16 --project=~/Projects/goal-code"
+function imjulia {
+    cd ~/Projects/goal-code && \
+        julia --threads 16 -J ~/Projects/goal-code/GFA-dependencies-sysimage.so -e 'pushover(\"Loaded\")'
+}
 function plutogoaljulia()
 {
     export USE_PLUTO=1 
@@ -462,7 +482,7 @@ function compilejulia()
 {
     #export USE_PLUTO=1 
     #cd "/home/ryoung/Projects/goal-code" && \
-    julia --threads 16 -e 'quickactivate(expanduser("~/Projects/goal-code")); using GoalFetchAnalysis; import Precompile; Precompile.precompile_GFA_dependencies(incremental=false); exit()'
+    julia --optimize --threads 16 -e 'quickactivate(expanduser("~/Projects/goal-code")); using GoalFetchAnalysis; GoalFetchAnalysis.Precompile.precompile_GFA_dependencies(incremental=false); exit()'
 }
 
 
