@@ -10,6 +10,10 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 end
 
 require('packer').startup(function(use)
+  
+  -- Jupyter notebook in neovim
+  use {'https://github.com/luk400/vim-jukit'}
+
   -- Package manager
   use 'wbthomason/packer.nvim'
 
@@ -56,7 +60,7 @@ require('packer').startup(function(use)
 
 
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even 
-                                            -- on blank lines
+  --                                           -- on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
   use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
 
@@ -73,11 +77,13 @@ require('packer').startup(function(use)
     'https://github.com/jesseleite/nvim-noirbuddy',
     requires = { "tjdevries/colorbuddy.nvim", branch = "dev" },
   }
+  use 'https://github.com/LunarVim/horizon.nvim'
   use 'https://github.com/navarasu/onedark.nvim'
   use 'https://github.com/rose-pine/neovim'
   use "rebelot/kanagawa.nvim"
   -- https://github.com/catppuccin/nvim
   use { "catppuccin/nvim", as = "catppuccin" } 
+  use { "https://github.com/maxmx03/fluoromachine.nvim" }
   use 'https://github.com/Mofiqul/dracula.nvim'
   use 'https://github.com/sainnhe/everforest'
   use 'https://github.com/morhetz/gruvbox'
@@ -91,7 +97,7 @@ require('packer').startup(function(use)
   use 'https://github.com/nanotech/jellybeans.vim'
   use 'https://github.com/gkapfham/vim-vitamin-onec'
   use 'https://github.com/dtinth/vim-colors-dtinth256'
-  use 'https://github.com/sainnhe/sonokai'
+  use 'https://github.com/sainnhe/sonokai' -- plain
   use 'https://github.com/jacoborus/tender.vim'
   use 'https://github.com/raphamorim/lucario'
   use 'https://github.com/Badacadabra/vim-archery'
@@ -115,7 +121,7 @@ require('packer').startup(function(use)
   
   -- Which key
   use {
-  "folke/which-key.nvim",
+  "https://github.com/folke/which-key.nvim",
   config = function()
     vim.o.timeout = true
     vim.o.timeoutlen = 300
@@ -124,23 +130,41 @@ require('packer').startup(function(use)
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
       }
+    vim.keymap.set(
+       "n", "<leader>lw", "<cmd>WhichKey<CR>", { noremap = true, silent = true })
+    vim.keymap.set(
+       "v", "<leader>lw", "<cmd>WhichKey<CR>", { noremap = true, silent = true })
     end
   }
   -- Modify the layout here! --- can I do this selectively?
   -- https://github.com/folke/which-key.nvim
+  wk = require("which-key")
+  wk.register({
+    ["<leader>"] = {
+      s={name="+search", 
+        c="+commands+colors",
+        o="+outline"
+      },
+      m={name="+mind"},
+      w={name="+workspace"},
+      l={name="+look"},
+      o={name="+outline"},
+      t={name="+tabs"},
+    }
+  })
 
   -- Tmux and REPL
   use 'https://github.com/jpalardy/vim-slime'
   -- use 'https://github.com/Olical/conjure' -- NOT USEFUL YET, but amazing
   --------------------------------------------- needs a :Connect method
   -- use 'https://github.com/andreypopp/julia-repl-vim' -- inspire conjure
-  use {'https://gitlab.com/usmcamp0811/nvim-julia-autotest',
-    config = function()
-      require("julia-autotest").setup()
-    end
-  }
-  use {'https://github.com/JuliaEditorSupport/julia-vim'}
-  vim.g.latex_to_unicode_keymap = 0;
+  -- use {'https://gitlab.com/usmcamp0811/nvim-julia-autotest',
+  --   config = function()
+  --     require("julia-autotest").setup()
+  --   end
+  -- }
+  -- use {'https://github.com/JuliaEditorSupport/julia-vim'}
+  -- vim.g.latex_to_unicode_keymap = 0;
 
 
   -- Lookup autocmd in lua and call :JuliaREPLConnect
@@ -200,9 +224,9 @@ require('packer').startup(function(use)
   use 'https://github.com/tpope/vim-obsession'
   use 'https://github.com/gcmt/taboo.vim'
   use {'https://github.com/Pocco81/auto-save.nvim',
-    config = function()
-      vim.api.nvim_set_keymap("n", "<leader>n", ":ASToggle<CR>", {})
-    end
+    -- config = function()
+    --   vim.api.nvim_set_keymap("n", "<leader>n", ":ASToggle<CR>", {})
+    -- end
   }
   vim.opt.sessionoptions:append("globals")
 
@@ -247,19 +271,21 @@ require('packer').startup(function(use)
   use {'https://github.com/m4xshen/smartcolumn.nvim',
     config = function ()
     require("smartcolumn").setup({
-        limit_to_window=true,    
+        limit_to_window    = true,    
         disabled_filetypes = { "help", "text", "markdown" },})
     end
   }
 
- --  -- Auto pairing parentheticals
-  --  [ Auto pair is fab, but it blocks my completion menus and 
-  --  predicted content from appearing in my vim session
-  --  ]
+ -- Auto pairing parentheticals
+ --  [ Auto pair is fab, but it blocks my completion menus and 
+ --  predicted content from appearing in my vim session
+ --  ]
  --  use {
 	-- "windwp/nvim-autopairs",
  --    config = function() require("nvim-autopairs").setup {} end 
  --  }
+
+
 
   -- Tags
   use 'simrat39/symbols-outline.nvim'
@@ -327,7 +353,13 @@ require('packer').startup(function(use)
   --         'ElPiloto/significant.nvim'
   --     }
   -- })
+
   use 'github/copilot.vim'
+  --- Use M-] to toggle to next and previous suggestions
+  -- TODO: Need to figure out how to grab a single word
+  -- or character at a time
+  -- SWITCH TO THIS EVENTUALLY! :)
+  -- https://github.com/zbirenbaum/copilot.lua
 
   -- Browsing
   use {"https://github.com/lalitmee/browse.nvim",
@@ -349,30 +381,30 @@ require('packer').startup(function(use)
       },
         };
          })
-        vim.keymap.set("n", "<leader>bb", function()
+        vim.keymap.set("n", "<leader>sB", function()
           require("browse").browse({ bookmarks = bookmarks })
-        end)
-        vim.keymap.set("n", "<leader>bs", function()
-          require("browse").input_search()
-        end)
+        end, {desc="browse [B]ookmarks"})
+        vim.keymap.set("n", "<leader>si", function()
+          require("browse").input_search() 
+        end, { desc="search the [i]nternet" })
     end
   }
 
   -- WTF and fun
-  use { 'https://github.com/tamton-aquib/zone.nvim' } -- screensave
+  -- use { 'https://github.com/tamton-aquib/zone.nvim' } -- screensave
   -- TODO finish setting up ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  use {
-    'tamton-aquib/duck.nvim',
-    config = function()
-        vim.keymap.set('n', '<leader>dr',
-          function() require("duck").hatch("🐀") end, {})
-        vim.keymap.set('n', '<leader>dd', 
-          function() require("duck").hatch() end, {})
-        vim.keymap.set('n', '<leader>dk', 
-          function() require("duck").cook() end, {})
-    end
-  }
-  use 'https://github.com/Eandrju/cellular-automaton.nvim'
+  -- use {
+  --   'tamton-aquib/duck.nvim',
+  --   config = function()
+  --       vim.keymap.set('n', '<leader>dr',
+  --         function() require("duck").hatch("🐀") end, {})
+  --       vim.keymap.set('n', '<leader>dd', 
+  --         function() require("duck").hatch() end, {})
+  --       vim.keymap.set('n', '<leader>dk', 
+  --         function() require("duck").cook() end, {})
+  --   end
+  -- }
+  -- use 'https://github.com/Eandrju/cellular-automaton.nvim'
 
 
   -- Note taking
@@ -405,7 +437,9 @@ require('packer').startup(function(use)
           -- PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" }, color = "hint" },
           NOTE = { icon = " ", color = "hint", },
           PLOT = { icon = "📊", color = "hint", },
-          QUESTION = { icon = "🤔", color = "hint", alt={"Q", "WHY"}}
+          QUESTION = { icon = "🤔", color = "hint", alt={"Q", "WHY"}},
+          SECTION = { icon = "ﮝ", color = "#FF69B4", alt={"SECT"}},
+          SUBSECTION = { icon = "§", color = "#DCDCDC", alt={"SUBSECT"}},
         },
         search = {
           command = "rg",
@@ -510,7 +544,7 @@ vim.wo.signcolumn = 'yes'
 -- Set colorscheme
 require("noirbuddy").setup()
 vim.o.termguicolors = true
-vim.cmd [[colorscheme catppuccin]]
+vim.cmd [[colorscheme bluloco]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -610,6 +644,7 @@ pcall(require('telescope').load_extension, 'fzf')
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -619,6 +654,14 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+-- Search all files, including ignored ones
+vim.keymap.set('n', '<leader>sa', function()
+  require('telescope.builtin').find_files({
+    find_command = {'rg', '--files', '--no-ignore'}
+  })
+end, { desc = 'Search All files, including ignored ones' })
+
+
 -- vim.keymap.set('n', '<leader>sp', function()
 --   require('telescope.builtin').find_files({
 --       cwd = vim.ui.input({ prompt = "Give workspace to search", default = "", completion = "file" }) });
@@ -636,6 +679,12 @@ vim.keymap.set('n', '<leader>st',
   require('telescope-tabs').list_tabs,{desc='[S]earch[T]abs;D-removetab'})
 vim.keymap.set('n', '<leader>T', 
   require('telescope-tabs').go_to_previous, { desc = 'Previous [T]ab' })
+vim.keymap.set('n', '<leader>scc',
+  require('telescope.builtin').commands, { desc = '[S]earch [C]ommands' })
+vim.keymap.set('n', '<leader>sch',
+  require('telescope.builtin').command_history, { desc = '[S]earch [C]ommands [H]istory' })
+vim.keymap.set('n', '<leader>scl',
+  require('telescope.builtin').colorscheme, { desc = '[S]earch [c]o[l]orschemes' })
 --- PLace a tab close
 
 --  Shortcuts for mind
@@ -657,7 +706,9 @@ vim.keymap.set('n', '<leader>mc',
 
 -- empty setup using defaults
 require("nvim-tree").setup()
-vim.keymap.set('n', '<leader>v', ":NvimTreeToggle<CR>", {noremap = true})
+vim.keymap.set('n', '<leader>v', ":NvimTreeToggle<CR>", {
+  desc = "file tree [v]iew",
+  noremap = true})
 -- vim.keymap.set('n', '<leader>v', ":NERDTreeToggle<CR>", {noremap = true})
 -- vim.cmd([[
 -- let g:nerdTreeOpenExternallyMap = "e"
@@ -735,6 +786,10 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
+
+-- JUKIT
+vim.g.jukit_mappings_ext_enabled = {'py', 'ipynb', 'jl'}
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
@@ -807,12 +862,7 @@ local servers = {
   html = {},
   cssls = {},
   lua_ls={},
-  -- sumneko_lua = {
-  --   Lua = {
-  --     workspace = { checkThirdParty = false },
-  --     telemetry = { enable = false },
-  --   },
-  -- }
+  matlab_ls = {},
 }
 
 
@@ -848,6 +898,38 @@ require("lspconfig").julials.setup {
     return util.find_git_ancestor(fname) or vim.fn.getcwd()
   end
 }
+
+--- Add matlab
+require('lspconfig').matlab_ls.setup {
+  cmd = { '/home/ryoung/.local/share/nvim/mason/bin/matlab-language-server', '--stdio' },
+  filetypes = { 'matlab' },
+  root_dir = function(fname)
+    return util.find_git_ancestor(fname) or vim.fn.getcwd()
+  end,
+  single_file_support = false,
+  settings = {
+    matlab = {
+      indexWorkspace = false,
+      installPath = '',
+      matlabConnectionTiming = 'onStart',
+      telemetry = true,
+      documentFormattingProvider = true,
+      signatureHelpProvider=true,
+      hoverProvider=true,
+      completionProvider=true,
+      codeActionProvider=true,
+      documentSymbol=true,
+      publishDiagnostics=true,
+    },
+  },
+  handlers = {
+    ['workspace/configuration'] = function(_, _, ctx)
+      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      return { client.config.settings.matlab }
+    end,
+  },
+};
+
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()
@@ -972,7 +1054,7 @@ require('mini.cursorword').setup({})
 local animate = require('mini.animate')
 animate.setup({
   scroll = {
-    timing = function(_, n) return math.min(5, 175 / n) end -- 175 is milliseconds of scroll animation
+    timing = function(_, n) return math.min(1, 150 / n) end -- 175 is milliseconds of scroll animation
   },
 })
 
@@ -1056,8 +1138,10 @@ require("scrollbar").setup()
 --   key = "not found"
 -- end
 -- vim.keymap.set('n', '<leader>C', "<Plug>(Copilot)", { desc = 'Previous [T]ab' })
+
 vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', 
+  { silent = true, expr = true })
 vim.g.copilot_filetypes = { markdown=1, yaml=1 }
 
 -- SOME VIM OPTIONS
@@ -1067,6 +1151,7 @@ vim.api.nvim_create_autocmd({'VimResized','WinNew'},
     vim.opt.cmdheight = 0 -- zero margin for the command
   end}
 )
+
 vim.api.nvim_create_autocmd({'FileType', 'BufEnter', 'BufNewFile'},
   {
     pattern={"*.py"},
@@ -1077,6 +1162,7 @@ vim.api.nvim_create_autocmd({'FileType', 'BufEnter', 'BufNewFile'},
     end
   }
 )
+
 vim.api.nvim_create_autocmd({'FileType','BufEnter', 'BufNewFile'},
   {
     pattern={"*.jl"},
@@ -1088,7 +1174,7 @@ vim.api.nvim_create_autocmd({'FileType','BufEnter', 'BufNewFile'},
 )
 
 require'no-neck-pain'.setup({
-  width = 110,
+  width = 120,
   NvimTree = {
     reopen=false, -- whether to repopen the NvimTree
   },
